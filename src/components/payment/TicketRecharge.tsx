@@ -16,41 +16,99 @@ interface TicketRechargeProps {
     price: number,
     quantity?: number,
   ) => void;
+  apiTicketData?:
+    | {
+        bonus_ticket_count: number;
+        ticket_count: number;
+        ticket_price: number;
+      }[]
+    | null;
 }
 
-const TicketRecharge = ({ onSelectTicket = () => {} }: TicketRechargeProps) => {
+const TicketRecharge = ({
+  onSelectTicket = () => {},
+  apiTicketData = null,
+}: TicketRechargeProps) => {
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
   const [ticketQuantity, setTicketQuantity] = useState<number>(1);
 
-  const tickets = [
-    {
-      id: "single",
-      name: "1회권",
-      price: 18000,
-      rides: 1,
-      bonus: 0,
-      pricePerRide: 18000,
-      popular: false,
-    },
-    {
-      id: "ten",
-      name: "10회권",
-      price: 180000,
-      rides: 10,
-      bonus: 1,
-      pricePerRide: 16364,
-      popular: true,
-    },
-    {
-      id: "thirty",
-      name: "30회권",
-      price: 540000,
-      rides: 30,
-      bonus: 4,
-      pricePerRide: 15882,
-      popular: false,
-    },
-  ];
+  // Generate tickets based on API data if available, otherwise use default values
+  const tickets =
+    apiTicketData && apiTicketData.length > 0
+      ? apiTicketData.map((ticket) => {
+          // Create different ticket types based on the ticket_count from API
+          const ticketCount = ticket.ticket_count;
+
+          if (ticketCount === 1) {
+            // Single ticket
+            return {
+              id: String(ticketCount),
+              name: "1회권",
+              price: ticket.ticket_price,
+              rides: ticketCount,
+              bonus: ticket.bonus_ticket_count,
+              pricePerRide: ticket.ticket_price,
+              popular: false,
+            };
+          } else if (ticketCount === 10) {
+            // 10-pack ticket
+            return {
+              id: String(ticketCount),
+              name: "10회권",
+              price: ticket.ticket_price * ticketCount,
+              rides: ticketCount,
+              bonus: ticket.bonus_ticket_count,
+              pricePerRide: Math.round(
+                (ticket.ticket_price * ticketCount) /
+                  (ticketCount + ticket.bonus_ticket_count),
+              ),
+              popular: true,
+            };
+          } else {
+            // 30-pack ticket or any other ticket type
+            return {
+              id: String(ticketCount),
+              name: `${ticketCount}회권`,
+              price: ticket.ticket_price * ticketCount,
+              rides: ticketCount,
+              bonus: ticket.bonus_ticket_count,
+              pricePerRide: Math.round(
+                (ticket.ticket_price * ticketCount) /
+                  (ticketCount + ticket.bonus_ticket_count),
+              ),
+              popular: ticketCount === 30,
+            };
+          }
+        })
+      : [
+          {
+            id: "single",
+            name: "1회권",
+            price: 18000,
+            rides: 1,
+            bonus: 0,
+            pricePerRide: 18000,
+            popular: false,
+          },
+          {
+            id: "ten",
+            name: "10회권",
+            price: 180000,
+            rides: 10,
+            bonus: 1,
+            pricePerRide: 16364,
+            popular: true,
+          },
+          {
+            id: "thirty",
+            name: "30회권",
+            price: 540000,
+            rides: 30,
+            bonus: 4,
+            pricePerRide: 15882,
+            popular: false,
+          },
+        ];
 
   const handleSelectTicket = (ticketId: string) => {
     setSelectedTicket(ticketId);
@@ -202,7 +260,14 @@ const TicketRecharge = ({ onSelectTicket = () => {} }: TicketRechargeProps) => {
                     <span className="font-medium">할인율:</span>{" "}
                     <span className="text-green-600 font-bold">
                       {Math.round(
-                        ((18030 - ticket.pricePerRide) / 18030) * 100,
+                        (((apiTicketData && apiTicketData.length > 0
+                          ? apiTicketData[0].ticket_price
+                          : 18000) -
+                          ticket.pricePerRide) /
+                          (apiTicketData && apiTicketData.length > 0
+                            ? apiTicketData[0].ticket_price
+                            : 18000)) *
+                          100,
                       )}
                       %
                     </span>
