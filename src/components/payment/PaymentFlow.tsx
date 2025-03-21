@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreditCard, CheckCircle, AlertCircle } from "lucide-react";
@@ -7,6 +7,7 @@ import TicketRecharge from "./TicketRecharge";
 import TossPaymentIntegration from "./TossPaymentIntegration";
 import PaymentConfirmation from "./PaymentConfirmation";
 import QuantityControl from "./QuantityControl";
+import { getTicket } from "@/lib/api";
 
 interface PaymentFlowProps {
   onComplete?: () => void;
@@ -23,6 +24,42 @@ const PaymentFlow = ({ onComplete = () => {} }: PaymentFlowProps) => {
     "pending" | "success" | "failed"
   >("pending");
   const [orderId, setOrderId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [ticketData, setTicketData] = useState<
+    {
+      bonus_ticket_count: number;
+      ticket_count: number;
+      ticket_price: number;
+    }[]
+  >([]);
+
+  // Fetch ticket data from API
+  useEffect(() => {
+    async function fetchTicketData() {
+      try {
+        setLoading(true);
+        const data = await getTicket();
+        if (data && data.length > 0) {
+          // Sort tickets by ticket_count to ensure proper ordering
+          const sortedData = [...data].sort(
+            (a, b) => a.ticket_count - b.ticket_count,
+          );
+          setTicketData(sortedData);
+        } else {
+          throw new Error("No ticket data available");
+        }
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching ticket data:", err);
+        setError("티켓 정보를 불러오는데 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTicketData();
+  }, []);
 
   const handleSelectTicket = (
     ticketType: string,
@@ -107,6 +144,37 @@ const PaymentFlow = ({ onComplete = () => {} }: PaymentFlowProps) => {
     }
   };
 
+  const renderTicketSelection = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-40">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="p-4 bg-red-50 text-red-600 rounded-md">
+          {error}
+          <button
+            className="ml-2 underline"
+            onClick={() => window.location.reload()}
+          >
+            다시 시도
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <TicketRecharge
+        onSelectTicket={handleSelectTicket}
+        apiTicketData={ticketData}
+      />
+    );
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto overflow-hidden no-scrollbar">
       <Tabs value={paymentStep} className="w-full">
@@ -134,9 +202,7 @@ const PaymentFlow = ({ onComplete = () => {} }: PaymentFlowProps) => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="select">
-          <TicketRecharge onSelectTicket={handleSelectTicket} />
-        </TabsContent>
+        <TabsContent value="select">{renderTicketSelection()}</TabsContent>
 
         <TabsContent value="payment">
           <Card className="shadow-[4px_4px_24px_0px_rgba(0,0,0,0.06)]">
