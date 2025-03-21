@@ -165,7 +165,11 @@ const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
       case "rideDetails":
         return (
           <>
-            <NavigationTop title="이동 상세 정보" onBack={() => setActiveSection("overview")} />
+            <NavigationTop
+              title="이동 상세 정보"
+              onBack={() => setActiveSection("overview")}
+              showLogout={true}
+            />
             <RideDetails
               ride={selectedRide}
               onBack={() => setActiveSection("overview")}
@@ -376,7 +380,11 @@ const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
       case "schedule":
         return (
           <>
-            <NavigationTop title="일정 예약" onBack={() => setActiveSection("overview")} />
+            <NavigationTop
+              title="일정 예약"
+              onBack={() => setActiveSection("overview")}
+              showLogout={true}
+            />
             <div className="pb-20 bg-transparent px-4 py-6">
               <BookingFlow />
             </div>
@@ -385,14 +393,24 @@ const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
       case "profile":
         return (
           <>
-            <NavigationTop title="내 정보" onBack={() => setActiveSection("overview")} />
-            <div className="px-4 py-6"><ProfileManager /></div>
+            <NavigationTop
+              title="내 정보"
+              onBack={() => setActiveSection("overview")}
+              showLogout={true}
+            />
+            <div className="px-4 py-6">
+              <ProfileManager />
+            </div>
           </>
         );
       case "history":
         return (
           <>
-            <NavigationTop title="이용내역" onBack={() => setActiveSection("overview")} />
+            <NavigationTop
+              title="이용내역"
+              onBack={() => setActiveSection("overview")}
+              showLogout={true}
+            />
             <div className="pb-20 px-4 py-6">
               <h2 className="text-xl font-bold mb-4">이동 이용내역</h2>
               <div className="space-y-3">
@@ -443,7 +461,11 @@ const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
       case "recharge":
         return (
           <>
-            <NavigationTop title="이용권 충전" onBack={() => setActiveSection("overview")} />
+            <NavigationTop
+              title="이용권 충전"
+              onBack={() => setActiveSection("overview")}
+              showLogout={true}
+            />
             <div className="pb-20 px-4 py-6">
               <PaymentFlow onComplete={() => setActiveSection("overview")} />
             </div>

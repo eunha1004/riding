@@ -25,6 +25,7 @@ interface Route {
   dropoff: string;
   pickupTime: string;
   dropoffTime: string;
+  duration?: number; // 소요시간 (분 단위)
 }
 
 const RouteBuilder = ({
@@ -135,7 +136,8 @@ const RouteBuilder = ({
       const updatedRoutes = routes.map((route) => {
         if (route.id === id) {
           const dropoffTime = calculateDropoffTime(pickupTime);
-          return { ...route, pickupTime, dropoffTime };
+          // 기본 소요시간 60분으로 설정
+          return { ...route, pickupTime, dropoffTime, duration: 60 };
         }
         return route;
       });
@@ -180,9 +182,12 @@ const RouteBuilder = ({
           console.log(`API 실패, 기본 계산 방식 사용: ${dropoffTime}`);
         }
 
+        // 소요시간을 분 단위로 계산 (초 -> 분)
+        const durationMinutes = Math.ceil(distanceResult.duration / 60);
+
         const updatedRoutes = routes.map((r) => {
           if (r.id === id) {
-            return { ...r, pickupTime, dropoffTime };
+            return { ...r, pickupTime, dropoffTime, duration: durationMinutes };
           }
           return r;
         });
@@ -195,7 +200,8 @@ const RouteBuilder = ({
         const updatedRoutes = routes.map((route) => {
           if (route.id === id) {
             const dropoffTime = calculateDropoffTime(pickupTime);
-            return { ...route, pickupTime, dropoffTime };
+            // 기본 소요시간 60분으로 설정
+            return { ...route, pickupTime, dropoffTime, duration: 60 };
           }
           return route;
         });
@@ -208,7 +214,8 @@ const RouteBuilder = ({
       const updatedRoutes = routes.map((route) => {
         if (route.id === id) {
           const dropoffTime = calculateDropoffTime(pickupTime);
-          return { ...route, pickupTime, dropoffTime };
+          // 기본 소요시간 60분으로 설정
+          return { ...route, pickupTime, dropoffTime, duration: 60 };
         }
         return route;
       });
@@ -373,7 +380,10 @@ const RouteBuilder = ({
                   {route.pickup && route.dropoff && route.pickupTime && (
                     <div className="text-xs text-muted-foreground mt-1 ml-[5.5rem] flex items-center">
                       <Clock className="h-3 w-3 mr-1" />
-                      <span>네이버 지도 기준</span>
+                      <span>
+                        예상 소요시간: 약 {route.duration || 60}분 (네이버 지도
+                        기준)
+                      </span>
                     </div>
                   )}
                   {route.pickupTime && route.dropoffTime && (
