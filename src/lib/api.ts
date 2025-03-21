@@ -1,7 +1,13 @@
 export const getTicket = async () => {
   try {
     const response = await fetch(
-      "https://d26d-61-73-136-134.ngrok-free.app/riding-api/tickets"
+      "https://djfuyo-ip-61-73-136-134.tunnelmole.net/riding-api/tickets",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
     const data = (await response.json()) as GetTicketResponse;
     return data;
