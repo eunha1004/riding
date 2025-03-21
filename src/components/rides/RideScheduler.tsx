@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import TabBarSmall from "@/components/ui/tab-bar-small";
-import NavigationTop from "@/components/ui/navigation-top";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar as CalendarIcon, Clock, AlertCircle } from "lucide-react";
@@ -13,7 +12,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getSavedLocations, Location } from "@/lib/locationStore";
 import BookingPaymentFlow from "../payment/BookingPaymentFlow";
@@ -25,7 +23,6 @@ interface RideSchedulerProps {
 const RideScheduler = ({
   savedLocations: propLocations = [],
 }: RideSchedulerProps) => {
-  const navigate = useNavigate();
   // 상태 변수들을 먼저 선언
   const [showPayment, setShowPayment] = useState(false);
   const [rideType, setRideType] = useState("one-time");
@@ -168,12 +165,11 @@ const RideScheduler = ({
 
   return (
     <div className="w-full overflow-y-auto max-h-[90vh] no-scrollbar bg-white">
-      <NavigationTop title="일정 예약" onBack={() => navigate(-1)} />
       {showPayment ? (
         <div className="w-full">
           <BookingPaymentFlow
             bookingDetails={getBookingDetails()}
-            onComplete={() => navigate("/")}
+            onComplete={() => window.location.href = "/"}
             onBack={handleBackToSchedule}
           />
         </div>

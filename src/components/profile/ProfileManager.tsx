@@ -8,7 +8,7 @@ const ProfileManager = () => {
   const [activeTab, setActiveTab] = useState("locations");
 
   return (
-    <div className="w-full pb-20">
+    <div className="w-full">
       <Tabs
         defaultValue="locations"
         className="w-full"
