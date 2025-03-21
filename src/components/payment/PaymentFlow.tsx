@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreditCard, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TicketRecharge from "./TicketRecharge";
-import TossPaymentIntegration from "./TossPaymentIntegration";
+import TossPaymentWidget from "./TossPaymentWidget";
 import PaymentConfirmation from "./PaymentConfirmation";
 import QuantityControl from "./QuantityControl";
 import { getTicket } from "@/lib/api";
@@ -242,7 +242,7 @@ const PaymentFlow = ({ onComplete = () => {} }: PaymentFlowProps) => {
 
                   <div className="pt-4">
                     <h3 className="text-sm font-medium mb-3">결제 방법 선택</h3>
-                    <TossPaymentIntegration
+                    <TossPaymentWidget
                       amount={selectedTicket.price}
                       orderId={orderId}
                       orderName={`대치라이드 ${selectedTicket.name} 이용권`}

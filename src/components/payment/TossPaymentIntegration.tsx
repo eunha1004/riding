@@ -16,7 +16,7 @@ interface PaymentWidget {
   renderPaymentMethods: (
     selector: string,
     amount: { value: number },
-    options?: any,
+    options?: any
   ) => void;
   renderAgreement: (selector: string) => void;
   requestPayment: (options: any) => Promise<any>;
@@ -82,7 +82,7 @@ const TossPaymentIntegration = ({
                     await window.PaymentWidget.renderPaymentMethods(
                       "#payment-widget",
                       { clientKey: clientKey, customerKey: customerName },
-                      { value: amount },
+                      { value: amount }
                     );
 
                   // @ts-ignore - 전역 객체 접근
@@ -183,7 +183,7 @@ const TossPaymentIntegration = ({
       if (onFail) {
         onFail(
           "PAYMENT_ERROR",
-          error instanceof Error ? error.message : "알 수 없는 오류",
+          error instanceof Error ? error.message : "알 수 없는 오류"
         );
       }
       setIsProcessing(false);
@@ -304,7 +304,11 @@ const TossPaymentIntegration = ({
         {/* 결제 수단 선택 탭 */}
         <div className="flex border-b">
           <button
-            className={`flex-1 py-3 px-4 text-center font-medium text-sm ${selectedPaymentMethod === "card" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-500"}`}
+            className={`flex-1 py-3 px-4 text-center font-medium text-sm ${
+              selectedPaymentMethod === "card"
+                ? "text-blue-500 border-b-2 border-blue-500"
+                : "text-gray-500"
+            }`}
             onClick={() => setSelectedPaymentMethod("card")}
           >
             <div className="flex justify-center items-center">
@@ -313,7 +317,11 @@ const TossPaymentIntegration = ({
             </div>
           </button>
           <button
-            className={`flex-1 py-3 px-4 text-center font-medium text-sm ${selectedPaymentMethod === "transfer" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-500"}`}
+            className={`flex-1 py-3 px-4 text-center font-medium text-sm ${
+              selectedPaymentMethod === "transfer"
+                ? "text-blue-500 border-b-2 border-blue-500"
+                : "text-gray-500"
+            }`}
             onClick={() => setSelectedPaymentMethod("transfer")}
           >
             <div className="flex justify-center items-center">
@@ -350,7 +358,9 @@ const TossPaymentIntegration = ({
                     {cards.map((card) => (
                       <div
                         key={card.id}
-                        className={`flex items-center p-3 cursor-pointer hover:bg-gray-50 ${selectedCard === card.id ? "bg-gray-50" : ""}`}
+                        className={`flex items-center p-3 cursor-pointer hover:bg-gray-50 ${
+                          selectedCard === card.id ? "bg-gray-50" : ""
+                        }`}
                         onClick={() => {
                           setSelectedCard(card.id);
                           setShowCardOptions(false);
@@ -474,7 +484,9 @@ const TossPaymentIntegration = ({
                     {banks.map((bank) => (
                       <div
                         key={bank.id}
-                        className={`flex items-center p-3 cursor-pointer hover:bg-gray-50 ${selectedBank === bank.id ? "bg-gray-50" : ""}`}
+                        className={`flex items-center p-3 cursor-pointer hover:bg-gray-50 ${
+                          selectedBank === bank.id ? "bg-gray-50" : ""
+                        }`}
                         onClick={() => {
                           setSelectedBank(bank.id);
                           setShowBankOptions(false);
@@ -524,7 +536,9 @@ const TossPaymentIntegration = ({
               </label>
             </div>
             <ChevronDown
-              className={`h-4 w-4 text-gray-400 transition-transform ${showAgreements ? "transform rotate-180" : ""}`}
+              className={`h-4 w-4 text-gray-400 transition-transform ${
+                showAgreements ? "transform rotate-180" : ""
+              }`}
             />
           </div>
 

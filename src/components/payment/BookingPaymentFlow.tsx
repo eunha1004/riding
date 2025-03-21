@@ -8,7 +8,7 @@ import {
   Calendar,
   Clock,
 } from "lucide-react";
-import TossPaymentIntegration from "./TossPaymentIntegration";
+import TossPaymentWidget from "./TossPaymentWidget";
 import { Button } from "@/components/ui/button";
 import PaymentConfirmation from "./PaymentConfirmation";
 
@@ -324,7 +324,7 @@ const BookingPaymentFlow = ({
 
                 <div className="pt-4">
                   <h3 className="text-sm font-medium mb-3">결제 방법 선택</h3>
-                  <TossPaymentIntegration
+                  <TossPaymentWidget
                     amount={priceInfo.price}
                     orderId={orderId}
                     orderName={`대치라이드 ${priceInfo.ticketType} 이용권`}
