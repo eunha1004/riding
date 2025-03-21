@@ -11,8 +11,10 @@ export const getTicket = async () => {
   }
 };
 
-interface GetTicketResponse {
+interface Ticket {
   bonus_ticket_count: number;
   ticket_count: number;
   ticket_price: number;
 }
+
+type GetTicketResponse = Ticket[];
