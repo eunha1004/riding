@@ -24,7 +24,7 @@ const BookingFlow = ({ onComplete = () => {} }: BookingFlowProps) => {
 
   return (
     <div className="w-full max-w-4xl mx-auto min-h-screen no-scrollbar bg-transparent">
-      <div className="py-2">
+      <div>
         <RideScheduler savedLocations={savedLocations} />
       </div>
     </div>

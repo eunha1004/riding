@@ -10,6 +10,20 @@ import ProfileManager from "../profile/ProfileManager";
 import PaymentFlow from "../payment/PaymentFlow";
 import RideDetails from "../rides/RideDetails";
 import { useAuth } from "../auth/AuthContext";
+import NavigationTop from "../ui/navigation-top";
+
+// Ride 타입 정의
+interface Ride {
+  id: string;
+  date: string;
+  time: string;
+  dropoffTime: string;
+  from: string;
+  to: string;
+  status: string;
+  isRecurring: boolean;
+  recurringDays?: string;
+}
 
 interface DashboardProps {
   userName?: string;
@@ -18,11 +32,11 @@ interface DashboardProps {
 
 const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
   const [activeSection, setActiveSection] = useState("overview");
-  const [selectedRide, setSelectedRide] = useState<any>(null);
+  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
   const { logout } = useAuth();
 
   // 대시보드용 샘플 데이터
-  const upcomingRides = [
+  const upcomingRides: Ride[] = [
     {
       id: "ride1",
       date: "2023-06-15",
@@ -56,7 +70,7 @@ const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
     },
   ];
 
-  const recentRides = [
+  const recentRides: Ride[] = [
     {
       id: "past1",
       date: "2023-06-14",
@@ -114,12 +128,12 @@ const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
     }
   };
 
-  const showRideDetails = (ride) => {
+  const showRideDetails = (ride: Ride) => {
     setSelectedRide(ride);
     setActiveSection("rideDetails");
   };
 
-  const handleCancelRide = (ride) => {
+  const handleCancelRide = (ride: Ride) => {
     // 여기에 실제 취소 로직 추가
     console.log("Ride cancelled:", ride.id);
 
@@ -150,15 +164,18 @@ const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
     switch (activeSection) {
       case "rideDetails":
         return (
-          <RideDetails
-            ride={selectedRide}
-            onBack={() => setActiveSection("overview")}
-            onCancel={handleCancelRide}
-          />
+          <>
+            <NavigationTop title="이동 상세 정보" onBack={() => setActiveSection("overview")} />
+            <RideDetails
+              ride={selectedRide}
+              onBack={() => setActiveSection("overview")}
+              onCancel={handleCancelRide}
+            />
+          </>
         );
       case "overview":
         return (
-          <div className="space-y-4 pb-20 bg-transparent">
+          <div className="space-y-4 pb-20 bg-transparent px-4 py-6">
             <Card className="">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-base font-medium">
@@ -358,65 +375,79 @@ const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
         );
       case "schedule":
         return (
-          <div className="pb-20 bg-transparent">
-            <BookingFlow />
-          </div>
+          <>
+            <NavigationTop title="일정 예약" onBack={() => setActiveSection("overview")} />
+            <div className="pb-20 bg-transparent px-4 py-6">
+              <BookingFlow />
+            </div>
+          </>
         );
       case "profile":
-        return <ProfileManager />;
+        return (
+          <>
+            <NavigationTop title="내 정보" onBack={() => setActiveSection("overview")} />
+            <div className="px-4 py-6"><ProfileManager /></div>
+          </>
+        );
       case "history":
         return (
-          <div className="pb-20">
-            <h2 className="text-xl font-bold mb-4">이동 이용내역</h2>
-            <div className="space-y-3">
-              {[...recentRides, ...upcomingRides].map((ride) => (
-                <div
-                  key={ride.id}
-                  className="border rounded-lg p-4 flex flex-col space-y-3 bg-white mb-4"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="font-medium">
-                        {ride.time} {ride.from} →{" "}
-                        {ride.dropoffTime || ride.time} {ride.to}
+          <>
+            <NavigationTop title="이용내역" onBack={() => setActiveSection("overview")} />
+            <div className="pb-20 px-4 py-6">
+              <h2 className="text-xl font-bold mb-4">이동 이용내역</h2>
+              <div className="space-y-3">
+                {[...recentRides, ...upcomingRides].map((ride) => (
+                  <div
+                    key={ride.id}
+                    className="border rounded-lg p-4 flex flex-col space-y-3 bg-white mb-4"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="font-medium">
+                          {ride.time} {ride.from} →{" "}
+                          {ride.dropoffTime || ride.time} {ride.to}
+                        </span>
+                      </div>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full ${ride.status === "completed" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`}
+                      >
+                        {ride.status === "completed" ? "완료됨" : "예정됨"}
                       </span>
                     </div>
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${ride.status === "completed" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`}
+                    <p className="text-xs text-gray-500">
+                      {ride.isRecurring ? (
+                        <>
+                          <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-xs mr-1">
+                            정기
+                          </span>
+                          {`매주 ${ride.recurringDays || "월, 수, 금"}요일`}
+                        </>
+                      ) : (
+                        new Date(ride.date).toLocaleDateString("ko-KR")
+                      )}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs self-end"
+                      onClick={() => showRideDetails(ride)}
                     >
-                      {ride.status === "completed" ? "완료됨" : "예정됨"}
-                    </span>
+                      상세보기
+                    </Button>
                   </div>
-                  <p className="text-xs text-gray-500">
-                    {ride.isRecurring ? (
-                      <>
-                        <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-xs mr-1">
-                          정기
-                        </span>
-                        {`매주 ${ride.recurringDays || "월, 수, 금"}요일`}
-                      </>
-                    ) : (
-                      new Date(ride.date).toLocaleDateString("ko-KR")
-                    )}
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-xs self-end"
-                    onClick={() => showRideDetails(ride)}
-                  >
-                    상세보기
-                  </Button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </>
         );
       case "recharge":
         return (
-          <div className="pb-20">
-            <PaymentFlow onComplete={() => setActiveSection("overview")} />
-          </div>
+          <>
+            <NavigationTop title="이용권 충전" onBack={() => setActiveSection("overview")} />
+            <div className="pb-20 px-4 py-6">
+              <PaymentFlow onComplete={() => setActiveSection("overview")} />
+            </div>
+          </>
         );
       default:
         return null;
@@ -428,7 +459,7 @@ const Dashboard = ({ userName = "김지연", onLogout }: DashboardProps) => {
       {activeSection === "overview" && (
         <NavigationMenu userName={userName} onLogout={handleLogout} />
       )}
-      <main className="px-4 py-6 overflow-y-auto h-[calc(100vh-120px)] no-scrollbar">
+      <main className="overflow-y-auto h-[calc(100vh-120px)] no-scrollbar">
         {renderContent()}
       </main>
       {/* 하단 GNB 네비게이션 */}

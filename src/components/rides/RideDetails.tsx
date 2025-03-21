@@ -37,7 +37,7 @@ const RideDetails = ({ ride, onBack, onCancel }: RideDetailsProps) => {
     );
     const currentTime = new Date();
     const hoursDifference = Math.floor(
-      (rideDateTime - currentTime) / (1000 * 60 * 60),
+      (rideDateTime.getTime() - currentTime.getTime()) / (1000 * 60 * 60),
     );
 
     let penaltyInfo = "";
@@ -86,12 +86,17 @@ const RideDetails = ({ ride, onBack, onCancel }: RideDetailsProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pr-[4] pt-[4] pb-[24] px-0">
+    <div className="px-4 py-6">
       <div className="flex items-center mb-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
-          <ArrowLeft className="h-5 w-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mr-2 h-8 w-8"
+          onClick={onBack}
+        >
+          <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-xl font-bold ml-2">이동 상세 정보</h1>
+        <h2 className="text-lg font-bold">이동 상세 정보</h2>
       </div>
       <Card className="mb-4 shadow-[4px_4px_24px_0px_rgba(0,0,0,0.06)]">
         <CardContent className="pt-6">
