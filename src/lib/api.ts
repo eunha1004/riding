@@ -1,7 +1,7 @@
 export const getTicket = async () => {
   try {
     const response = await fetch(
-      "https://esassc-ip-61-73-136-134.tunnelmole.net/riding-api/tickets",
+      "https://v9roqp-ip-61-73-136-134.tunnelmole.net/riding-api/tickets",
       {
         method: "GET",
         headers: {
